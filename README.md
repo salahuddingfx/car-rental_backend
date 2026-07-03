@@ -387,7 +387,7 @@ See [CHANGELOG.md](CHANGELOG.md)
 
 ## Authors
 
-- **Salauddin Kader Appy** - *Full Stack Developer* - [GitHub](https://github.com/salahuddingfx)
+- **Salah Uddin Kader** - *Full Stack Developer* - [GitHub](https://github.com/salahuddingfx)
 
 ---
 
