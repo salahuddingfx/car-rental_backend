@@ -363,163 +363,25 @@ QUEUE_CONNECTION=database
 
 ## Security
 
-### Security Features Implemented
-
-| Feature | Implementation |
-|---------|---------------|
-| **Authentication** | Laravel Sanctum token-based with 24h expiry |
-| **Rate Limiting** | Auth endpoints: 5 attempts/60s. General: 30 req/min |
-| **CSRF Protection** | Sanctum stateful domains + token validation |
-| **SQL Injection** | Eloquent ORM (parameterized queries) |
-| **XSS Prevention** | React frontend auto-escapes + `SecurityHeaders` middleware |
-| **CORS** | Whitelist only `FRONTEND_URL` + `ADMIN_URL` with credentials |
-| **Authorization** | 3 Policies: CarPolicy, BookingPolicy, UserPolicy (role-based) |
-| **Input Validation** | Form Request validation on all endpoints |
-| **File Upload** | MIME validation, path traversal protection, size limits |
-| **Security Headers** | X-Frame-Options, X-Content-Type-Options, X-XSS-Protection, CSP, HSTS (prod) |
-| **Email Verification** | Signed URLs with 60min expiry |
-| **Admin Guard** | `AdminOnly` middleware on all admin routes |
-| **Soft Deletes** | Data preserved on user/car/booking deletion |
-| **Audit Trail** | `TrackAnalytics` middleware logs all API requests |
-
-### Reporting Vulnerabilities
-
-If you discover a security vulnerability, please email **salauddinkaderappy@gmail.com** directly. Do NOT open a public GitHub issue.
-
-- We will respond within 48 hours
-- We will work with you to understand and address the issue
-- We will credit reporters in the changelog (unless you prefer anonymity)
+See [SECURITY.md](SECURITY.md) for vulnerability reporting and security features.
 
 ---
 
 ## Contributing
 
-### Development Setup
-
-```bash
-# Clone the repo
-git clone https://github.com/salahuddingfx/car-rental_backend.git
-cd car-rental_backend
-
-# Install dependencies
-composer install
-
-# Environment setup
-cp .env.example .env
-php artisan key:generate
-
-# Database
-php artisan migrate --force
-php artisan db:seed
-
-# Run development server
-php artisan serve
-```
-
-### Code Style
-
-- Follow [PSR-12](https://www.php-fig.org/psr/psr-12/) coding standard
-- Run `./vendor/bin/pint` before committing
-- Use strict types: `declare(strict_types=1)`
-
-### Commit Messages
-
-```
-feat: add new feature
-fix: bug fix
-docs: documentation changes
-style: formatting, no code change
-refactor: code restructuring
-test: adding tests
-chore: maintenance tasks
-```
-
-### Pull Request Process
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feat/amazing-feature`)
-3. Write tests for new functionality
-4. Run `./vendor/bin/pint` and `php artisan test`
-5. Commit with descriptive message
-6. Push to your fork and open a PR
-7. Wait for CI checks and review
-
-### Project Rules
-
-- No WebSocket/Pusher/Soketi (shared hosting)
-- No API-based payment send money/cashout (manual verification only)
-- No Google Maps API (use OpenStreetMap/Leaflet)
-- All users treated as untrusted (Zero Trust)
-- Sync driver for email (no queue worker)
-- Bengali/English mixed comments acceptable
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, code style, commit messages, and PR process.
 
 ---
 
 ## Code of Conduct
 
-### Our Pledge
-
-We are committed to making participation in this project a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, gender identity and expression, level of experience, nationality, personal appearance, race, religion, or sexual identity and orientation.
-
-### Our Standards
-
-**Expected behavior:**
-- Using welcoming and inclusive language
-- Being respectful of differing viewpoints and experiences
-- Gracefully accepting constructive criticism
-- Focusing on what is best for the community
-- Showing empathy towards other community members
-
-**Unacceptable behavior:**
-- Trolling, insulting/derogatory comments, and personal attacks
-- Public or private harassment
-- Publishing others' private information without explicit permission
-- Other conduct which could reasonably be considered inappropriate
-
-### Enforcement
-
-Project maintainers have the right to remove, edit, or reject comments, commits, code, wiki edits, issues, and other contributions that are not aligned to this Code of Conduct.
+See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ---
 
 ## Changelog
 
-### v1.0.0 (July 2026)
-
-**Core Features:**
-- User registration with email verification
-- Car listing with CRUD operations
-- Booking system with status tracking
-- Manual payment verification (bKash/Nagad/COD)
-- Review system with sub-ratings and photos
-- Token-based review links (30-day expiry)
-- Dynamic car categories (8 seeded)
-- CMS content management (blog, FAQs, offers, timelines)
-
-**Advanced Features:**
-- Loyalty points system with 4 tiers (Bronze/Silver/Gold/Platinum)
-- Referral program with unique codes and bonus tracking
-- Geolocation search with Haversine formula (OpenStreetMap/Leaflet)
-- Real-time polling (30s interval, no WebSocket)
-- Analytics tracking middleware (device, browser, OS, response time)
-- Guest chat system with admin reply
-- File upload with MIME validation
-
-**Security:**
-- Sanctum token auth with 24h expiry
-- Role-based access control (user/host/driver/company/admin)
-- 3 authorization policies (Car, Booking, User)
-- Rate limiting on auth, reviews, chat, uploads
-- Security headers (XSS, CSP, HSTS, X-Frame-Options)
-- Path traversal protection on file uploads
-- Signed URL email verification
-- Admin-only middleware on all admin routes
-
-**Email System:**
-- Booking confirmed notification
-- Booking cancelled notification
-- Payment received notification
-- Sync driver (shared hosting compatible)
+See [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
@@ -542,24 +404,4 @@ Project maintainers have the right to remove, edit, or reject comments, commits,
 
 ## License
 
-MIT License
-
-Copyright (c) 2026 Salauddin Kader Appy
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+See [LICENSE](LICENSE)
