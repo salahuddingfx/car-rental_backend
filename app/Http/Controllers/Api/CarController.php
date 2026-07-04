@@ -10,7 +10,7 @@ class CarController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Car::with('user');
+        $query = Car::with(['user', 'provider']);
 
         if ($request->category && $request->category !== 'All') {
             $query->where('category', $request->category);
@@ -26,6 +26,9 @@ class CarController extends Controller
         }
         if ($request->max_price) {
             $query->where('price', '<=', $request->max_price);
+        }
+        if ($request->provider_id) {
+            $query->where('provider_id', $request->provider_id);
         }
         if ($request->search) {
             $query->where(function ($q) use ($request) {
@@ -68,7 +71,7 @@ class CarController extends Controller
 
     public function show(Car $car)
     {
-        return response()->json($car->load(['user', 'reviews' => function ($q) {
+        return response()->json($car->load(['user', 'provider', 'assignedDriver.user', 'reviews' => function ($q) use ($car) {
             $q->whereNull('car_id')->orWhere('car_id', $car->id);
             $q->latest()->limit(10);
         }]));
@@ -98,7 +101,14 @@ class CarController extends Controller
 
         $car = $request->user()->cars()->create($validated);
 
-        return response()->json($car, 201);
+        // Link to provider if user has one
+        $provider = $request->user()->provider;
+        if ($provider) {
+            $car->update(['provider_id' => $provider->id]);
+            $provider->increment('total_cars');
+        }
+
+        return response()->json($car->load('provider'), 201);
     }
 
     public function update(Request $request, Car $car)

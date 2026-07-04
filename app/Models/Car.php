@@ -14,6 +14,7 @@ class Car extends Model
         'name', 'brand', 'category', 'price', 'seats', 'transmission', 'fuel',
         'power', 'speed', 'description', 'features', 'image', 'images', 'location',
         'latitude', 'longitude', 'rating', 'reviews_count', 'is_available', 'year', 'user_id',
+        'provider_id', 'assigned_driver_id',
     ];
 
     protected function casts(): array
@@ -32,4 +33,6 @@ class Car extends Model
     public function user() { return $this->belongsTo(User::class); }
     public function bookings() { return $this->hasMany(Booking::class); }
     public function reviews() { return $this->hasMany(Review::class); }
+    public function provider() { return $this->belongsTo(Provider::class); }
+    public function assignedDriver() { return $this->belongsTo(ProviderMember::class, 'assigned_driver_id'); }
 }

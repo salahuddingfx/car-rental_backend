@@ -18,6 +18,9 @@ use App\Http\Controllers\Api\LoyaltyController;
 use App\Http\Controllers\Api\AnalyticsController;
 use App\Http\Controllers\Api\ReviewLinkController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProviderController;
+use App\Http\Controllers\Api\ProviderMemberController;
+use App\Http\Controllers\Api\ProviderVerificationController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -25,6 +28,11 @@ Route::post('/auth/register', [AuthController::class, 'register'])->middleware('
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle.auth');
 Route::post('/admin/login', [AuthController::class, 'adminLogin'])->middleware('throttle.auth');
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
+
+// Public providers
+Route::get('/providers', [ProviderController::class, 'index']);
+Route::get('/providers/{provider}', [ProviderController::class, 'show']);
+Route::get('/providers/{provider}/cars', [ProviderController::class, 'providerCars']);
 
 // Public data
 Route::get('/cars', [CarController::class, 'index']);
@@ -100,6 +108,25 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/referral/generate', [LoyaltyController::class, 'generateReferral']);
     Route::get('/referral/stats', [LoyaltyController::class, 'referralStats']);
     Route::post('/referral/apply', [LoyaltyController::class, 'applyReferral']);
+
+    // Provider Management
+    Route::post('/providers', [ProviderController::class, 'store']);
+    Route::get('/providers/mine', [ProviderController::class, 'mine']);
+    Route::put('/providers/mine', [ProviderController::class, 'updateMine']);
+    Route::get('/providers/mine/cars', [ProviderController::class, 'myCars']);
+    Route::get('/providers/mine/stats', [ProviderController::class, 'myStats']);
+    Route::post('/bookings/{booking}/assign-driver', [ProviderController::class, 'assignDriver']);
+
+    // Provider Members (drivers)
+    Route::get('/providers/mine/members', [ProviderMemberController::class, 'index']);
+    Route::post('/providers/mine/members', [ProviderMemberController::class, 'store']);
+    Route::put('/providers/mine/members/{member}', [ProviderMemberController::class, 'update']);
+    Route::delete('/providers/mine/members/{member}', [ProviderMemberController::class, 'destroy']);
+    Route::post('/providers/mine/members/{member}/license', [ProviderMemberController::class, 'submitLicense']);
+
+    // Provider Verifications
+    Route::get('/providers/mine/verifications', [ProviderVerificationController::class, 'index']);
+    Route::post('/providers/mine/verifications', [ProviderVerificationController::class, 'store']);
 
     // CMS write (for admin)
     Route::middleware(AdminOnly::class)->prefix('admin')->group(function () {
@@ -184,5 +211,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::put('/categories/{category}', [CategoryController::class, 'update']);
         Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
+
+        // Providers
+        Route::get('/providers', [ProviderController::class, 'adminIndex']);
+        Route::get('/providers/pending', [ProviderController::class, 'adminPending']);
+        Route::get('/providers/{provider}', [ProviderController::class, 'adminShow']);
+        Route::put('/providers/{provider}/verify', [ProviderController::class, 'adminVerify']);
+        Route::put('/providers/{provider}/status', [ProviderController::class, 'adminToggleStatus']);
+        Route::get('/providers/{provider}/members', [ProviderController::class, 'adminMembers']);
+        Route::put('/providers/members/{member}/verify', [ProviderController::class, 'adminVerifyMember']);
     });
 });

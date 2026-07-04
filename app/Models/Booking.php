@@ -13,6 +13,7 @@ class Booking extends Model
     protected $fillable = [
         'booking_ref', 'car_id', 'user_id', 'pickup_date', 'return_date',
         'total_days', 'total_price', 'status', 'driver_info', 'payment_status', 'payment_id',
+        'provider_id', 'assigned_driver_id',
     ];
 
     protected function casts(): array
@@ -26,4 +27,6 @@ class Booking extends Model
     public function car() { return $this->belongsTo(Car::class); }
     public function user() { return $this->belongsTo(User::class); }
     public function payment() { return $this->belongsTo(Payment::class); }
+    public function provider() { return $this->belongsTo(Provider::class); }
+    public function assignedDriver() { return $this->belongsTo(ProviderMember::class, 'assigned_driver_id'); }
 }

@@ -37,4 +37,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function loyaltyPoints() { return $this->hasMany(LoyaltyPoint::class); }
     public function referralsMade() { return $this->hasMany(Referral::class, 'referrer_id'); }
     public function referralsReceived() { return $this->hasMany(Referral::class, 'referee_id'); }
+
+    public function provider() { return $this->hasOne(Provider::class); }
+    public function providerMemberships() { return $this->hasMany(ProviderMember::class); }
+
+    public function isProvider(): bool
+    {
+        return $this->provider()->exists();
+    }
+
+    public function isDriverMember(): bool
+    {
+        return $this->providerMemberships()->where('role', 'driver')->exists();
+    }
 }

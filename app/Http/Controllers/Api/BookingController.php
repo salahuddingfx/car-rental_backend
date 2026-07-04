@@ -28,7 +28,7 @@ class BookingController extends Controller
             'driver_info' => 'nullable|array',
         ]);
 
-        $car = Car::find($validated['car_id']);
+        $car = Car::with('provider')->find($validated['car_id']);
         $days = max(1, \Carbon\Carbon::parse($validated['pickup_date'])->diffInDays($validated['return_date']));
         $totalPrice = $days * $car->price;
 
@@ -39,11 +39,17 @@ class BookingController extends Controller
             'total_days' => $days,
             'total_price' => $totalPrice,
             'status' => 'Upcoming',
+            'provider_id' => $car->provider_id,
         ]);
 
-        BookingConfirmed::dispatch($booking->load(['car', 'user']));
+        // Increment provider total_bookings
+        if ($car->provider) {
+            $car->provider->increment('total_bookings');
+        }
 
-        return response()->json($booking->load('car'), 201);
+        BookingConfirmed::dispatch($booking->load(['car', 'user', 'provider']));
+
+        return response()->json($booking->load(['car', 'provider']), 201);
     }
 
     public function show(Request $request, Booking $booking)
