@@ -21,6 +21,8 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProviderController;
 use App\Http\Controllers\Api\ProviderMemberController;
 use App\Http\Controllers\Api\ProviderVerificationController;
+use App\Http\Controllers\Api\GuestBookingController;
+use App\Http\Controllers\Api\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -43,6 +45,11 @@ Route::get('/blog/{slug}', [BlogController::class, 'show']);
 Route::get('/cms', [CmsController::class, 'getCmsContent']);
 Route::get('/cms/{key}', [CmsController::class, 'getCmsByKey']);
 Route::post('/bookings/lookup', [BookingController::class, 'lookup'])->middleware('throttle:10,1');
+
+// Guest Bookings (public)
+Route::post('/guest-bookings', [GuestBookingController::class, 'store'])->middleware('throttle:10,1');
+Route::get('/guest-bookings/{guestBooking}', [GuestBookingController::class, 'show']);
+Route::post('/guest-bookings/lookup', [GuestBookingController::class, 'lookup'])->middleware('throttle:10,1');
 
 // Reviews (public)
 Route::get('/reviews', [ReviewController::class, 'index']);
@@ -100,6 +107,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Reviews (authenticated)
     Route::post('/reviews', [ReviewController::class, 'store']);
+
+    // Wishlist
+    Route::get('/wishlist', [WishlistController::class, 'index']);
+    Route::post('/wishlist/{carId}/toggle', [WishlistController::class, 'toggle']);
+    Route::delete('/wishlist/{carId}', [WishlistController::class, 'destroy']);
+    Route::get('/wishlist/{carId}/check', [WishlistController::class, 'check']);
 
     // Loyalty & Referral
     Route::get('/loyalty/balance', [LoyaltyController::class, 'balance']);
@@ -195,6 +208,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Admin analytics (traffic, requests, visitors)
         Route::get('/analytics/overview', [AnalyticsController::class, 'overview']);
+        Route::get('/analytics/booking-trends', [AnalyticsController::class, 'bookingTrends']);
+        Route::get('/analytics/user-growth', [AnalyticsController::class, 'userGrowth']);
+        Route::get('/analytics/car-utilization', [AnalyticsController::class, 'carUtilization']);
 
         // Chat
         Route::get('/chats', [ChatController::class, 'adminIndex']);
