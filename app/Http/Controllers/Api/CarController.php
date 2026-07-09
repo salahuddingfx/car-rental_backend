@@ -56,6 +56,9 @@ class CarController extends Controller
                 ->orderBy('distance');
         } else {
             $sort = $request->get('sort', 'rating');
+            // Always prioritize premium cars, then apply secondary sort
+            $query->orderByDesc('is_premium')->orderByDesc('premium_priority');
+
             match ($sort) {
                 'price_low' => $query->orderBy('price', 'asc'),
                 'price_high' => $query->orderBy('price', 'desc'),
@@ -151,5 +154,34 @@ class CarController extends Controller
 
         $car->delete();
         return response()->json(['message' => 'Car deleted']);
+    }
+
+    public function nearby(Request $request)
+    {
+        $request->validate([
+            'lat' => 'required|numeric|between:-90,90',
+            'lng' => 'required|numeric|between:-180,180',
+            'radius' => 'nullable|numeric|min:1|max:500',
+        ]);
+
+        $lat = (float) $request->lat;
+        $lng = (float) $request->lng;
+        $radius = (float) $request->get('radius', 50);
+
+        $cars = Car::selectRaw("*, (
+            6371 * acos(
+                cos(radians(?)) * cos(radians(latitude)) *
+                cos(radians(longitude) - radians(?)) +
+                sin(radians(?)) * sin(radians(latitude))
+            ) AS distance", [$lat, $lng, $lat])
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->where('is_available', true)
+            ->having('distance', '<', $radius)
+            ->orderBy('distance')
+            ->with(['user', 'provider'])
+            ->paginate($request->get('per_page', 12));
+
+        return response()->json($cars);
     }
 }
