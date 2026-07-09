@@ -332,7 +332,7 @@ class DatabaseSeeder extends Seeder
                 ],
                 [
                     'code' => 'APEX500',
-                    'type' => 'flat',
+                    'type' => 'fixed',
                     'value' => 500.00,
                     'min_booking_amount' => 2000.00,
                     'max_uses' => 50,
