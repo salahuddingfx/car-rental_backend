@@ -14,7 +14,7 @@ class Car extends Model
         'name', 'brand', 'category', 'price', 'seats', 'transmission', 'fuel',
         'power', 'speed', 'description', 'features', 'image', 'images', 'location',
         'latitude', 'longitude', 'rating', 'reviews_count', 'is_available', 'year', 'user_id',
-        'provider_id', 'assigned_driver_id',
+        'provider_id', 'assigned_driver_id', 'is_premium', 'premium_expires_at', 'premium_priority',
     ];
 
     protected function casts(): array
@@ -27,6 +27,8 @@ class Car extends Model
             'latitude' => 'decimal:7',
             'longitude' => 'decimal:7',
             'is_available' => 'boolean',
+            'is_premium' => 'boolean',
+            'premium_expires_at' => 'datetime',
         ];
     }
 
@@ -35,4 +37,5 @@ class Car extends Model
     public function reviews() { return $this->hasMany(Review::class); }
     public function provider() { return $this->belongsTo(Provider::class); }
     public function assignedDriver() { return $this->belongsTo(ProviderMember::class, 'assigned_driver_id'); }
+    public function premiumOrders() { return $this->hasMany(PremiumOrder::class); }
 }

@@ -23,6 +23,14 @@ use App\Http\Controllers\Api\ProviderMemberController;
 use App\Http\Controllers\Api\ProviderVerificationController;
 use App\Http\Controllers\Api\GuestBookingController;
 use App\Http\Controllers\Api\WishlistController;
+use App\Http\Controllers\Api\ForgotPasswordController;
+use App\Http\Controllers\Api\ResetPasswordController;
+use App\Http\Controllers\Api\CouponController;
+use App\Http\Controllers\Api\AvailabilityController;
+use App\Http\Controllers\Api\GpsController;
+use App\Http\Controllers\Api\InvoiceController;
+use App\Http\Controllers\Api\PremiumController;
+use App\Http\Controllers\Api\PricingController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -30,6 +38,10 @@ Route::post('/auth/register', [AuthController::class, 'register'])->middleware('
 Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle.auth');
 Route::post('/admin/login', [AuthController::class, 'adminLogin'])->middleware('throttle.auth');
 Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware(['signed', 'throttle:6,1'])->name('verification.verify');
+Route::post('/auth/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
+Route::post('/auth/reset-password', [ResetPasswordController::class, 'reset']);
+Route::post('/coupons/validate', [CouponController::class, 'validate']);
+Route::get('/cars/{car}/availability', [AvailabilityController::class, 'check']);
 
 // Public providers
 Route::get('/providers', [ProviderController::class, 'index']);
@@ -39,6 +51,7 @@ Route::get('/providers/{provider}/cars', [ProviderController::class, 'providerCa
 // Public data
 Route::get('/cars', [CarController::class, 'index']);
 Route::get('/cars/{car}', [CarController::class, 'show']);
+Route::get('/premium/plans', [PremiumController::class, 'plans']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/blog', [BlogController::class, 'index']);
 Route::get('/blog/{slug}', [BlogController::class, 'show']);
@@ -93,6 +106,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/cars', [CarController::class, 'store']);
     Route::put('/cars/{car}', [CarController::class, 'update']);
     Route::delete('/cars/{car}', [CarController::class, 'destroy']);
+    Route::get('/cars/nearby', [CarController::class, 'nearby']);
 
     // Bookings
     Route::get('/bookings', [BookingController::class, 'index']);
@@ -113,6 +127,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/wishlist/{carId}/toggle', [WishlistController::class, 'toggle']);
     Route::delete('/wishlist/{carId}', [WishlistController::class, 'destroy']);
     Route::get('/wishlist/{carId}/check', [WishlistController::class, 'check']);
+
+    // Invoices
+    Route::get('/invoices/{booking}/download', [InvoiceController::class, 'download']);
+    Route::get('/invoices/{booking}/pdf', [InvoiceController::class, 'pdf']);
+
+    // Premium
+    Route::post('/premium/purchase', [PremiumController::class, 'purchase']);
+    Route::get('/premium/my-cars', [PremiumController::class, 'myPremiumCars']);
+
+    // Pricing
+    Route::post('/pricing/calculate', [PricingController::class, 'calculate']);
+
+    // GPS Tracking
+    Route::post('/gps/update', [GpsController::class, 'updateLocation']);
+    Route::get('/gps/car/{carId}', [GpsController::class, 'getCarLocation']);
+    Route::get('/gps/booking/{bookingId}', [GpsController::class, 'getBookingLocation']);
+    Route::get('/gps/track/{bookingId}', [GpsController::class, 'trackHistory']);
 
     // Loyalty & Referral
     Route::get('/loyalty/balance', [LoyaltyController::class, 'balance']);
@@ -236,5 +267,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/providers/{provider}/status', [ProviderController::class, 'adminToggleStatus']);
         Route::get('/providers/{provider}/members', [ProviderController::class, 'adminMembers']);
         Route::put('/providers/members/{member}/verify', [ProviderController::class, 'adminVerifyMember']);
+
+        // Coupons
+        Route::get('/coupons', [CouponController::class, 'index']);
+        Route::post('/coupons', [CouponController::class, 'store']);
+        Route::put('/coupons/{coupon}', [CouponController::class, 'update']);
+        Route::delete('/coupons/{coupon}', [CouponController::class, 'destroy']);
+
+        // Pricing Rules (admin)
+        Route::get('/pricing/rules', [PricingController::class, 'rules']);
+        Route::post('/pricing/rules', [PricingController::class, 'storeRule']);
+        Route::put('/pricing/rules/{rule}', [PricingController::class, 'updateRule']);
+        Route::delete('/pricing/rules/{rule}', [PricingController::class, 'deleteRule']);
     });
 });
