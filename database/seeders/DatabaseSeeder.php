@@ -269,7 +269,7 @@ class DatabaseSeeder extends Seeder
                         'text' => 'The car was extremely clean and ran smoothly. Excellent communication with the host. Highly recommend!',
                         'is_verified' => true,
                         'helpful_count' => 2,
-                        'source' => 'local',
+                        'source' => 'apexride',
                         'date' => $now->subDays(3),
                     ]);
                 }
